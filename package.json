@@ -6,7 +6,8 @@
     "dev": "bun run --watch src/index.ts"
   },
   "dependencies": {
-    "elysia": "latest"
+    "elysia": "latest",
+    "google-auth-library": "^10.6.2"
   },
   "devDependencies": {
     "bun-types": "latest"

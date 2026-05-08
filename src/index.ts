@@ -1,4 +1,5 @@
 import { Elysia } from "elysia";
+import { GoogleAuth } from "google-auth-library";
 import { appConfig } from "./config/appConfig";
 
 const routes: Record<string, string> = {
@@ -14,6 +15,17 @@ function matchRoute(path: string): string | null {
   return null;
 }
 
+const auth = new GoogleAuth();
+
+async function getIdToken(audience: string): Promise<string | null> {
+  try {
+    const client = await auth.getIdTokenClient(audience);
+    return await client.idTokenProvider.fetchIdToken(audience);
+  } catch {
+    return null;
+  }
+}
+
 const app = new Elysia()
   .all("/*", async ({ request, path }) => {
     const upstream = matchRoute(path);
@@ -24,9 +36,15 @@ const app = new Elysia()
 
     const url = upstream + request.url.slice(request.url.indexOf(path));
 
+    const headers = new Headers(request.headers);
+    const idToken = await getIdToken(upstream);
+    if (idToken) {
+      headers.set("Authorization", `Bearer ${idToken}`);
+    }
+
     const res = await fetch(url, {
       method: request.method,
-      headers: request.headers,
+      headers,
       body: request.body,
     });
 
