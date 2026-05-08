@@ -36,10 +36,14 @@ const app = new Elysia()
 
     const url = upstream + request.url.slice(request.url.indexOf(path));
 
-    const headers = new Headers(request.headers);
-    const idToken = await getIdToken(upstream);
-    console.log(`Proxying request to ${url} with ID token: ${idToken}`);
+    const headers = new Headers();
+    const allowedHeaders = ["content-type", "accept", "accept-language", "accept-encoding"];
+    for (const key of allowedHeaders) {
+      const value = request.headers.get(key);
+      if (value) headers.set(key, value);
+    }
 
+    const idToken = await getIdToken(upstream);
     if (idToken) {
       headers.set("Authorization", `Bearer ${idToken}`);
     }
