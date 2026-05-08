@@ -1,8 +1,8 @@
 import { Elysia } from "elysia";
+import { appConfig } from "./config/appConfig";
 
 const routes: Record<string, string> = {
-  "/users": "http://user-service:3001",
-  "/orders": "http://order-service:3002",
+  "/users": appConfig.userApiBaseUrl,
 };
 
 function matchRoute(path: string): string | null {
@@ -35,6 +35,6 @@ const app = new Elysia()
       headers: res.headers,
     });
   })
-  .listen(Number(process.env.PORT) || 3000);
+  .listen(appConfig.port);
 
 console.log(`🦊 Elysia is running at ${app.server?.hostname}:${app.server?.port}`);
