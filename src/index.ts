@@ -38,6 +38,8 @@ const app = new Elysia()
 
     const headers = new Headers(request.headers);
     const idToken = await getIdToken(upstream);
+    console.log(`Proxying request to ${url} with ID token: ${idToken}`);
+
     if (idToken) {
       headers.set("Authorization", `Bearer ${idToken}`);
     }
