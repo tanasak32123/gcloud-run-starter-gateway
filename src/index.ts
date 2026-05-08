@@ -38,12 +38,10 @@ const app = new Elysia()
 
     const headers = new Headers(request.headers);
     const idToken = await getIdToken(upstream);
-    console.log(`Forwarding request to ${url} with ID token: ${idToken ? "Yes" : "No"}`);
     if (idToken) {
       headers.set("Authorization", `Bearer ${idToken}`);
     }
 
-    console.log(`Forwarding request to ${url} with headers: ${JSON.stringify(Object.fromEntries(headers.entries()))}`);
     const res = await fetch(url, {
       method: request.method,
       headers,
